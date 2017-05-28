@@ -15,12 +15,6 @@ def outliers_treatment():
 
 
 
-
-
-
-
-
-
 if __name__ == '__main__':
     filePath = "train.csv"
     data = open_file(filePath)
