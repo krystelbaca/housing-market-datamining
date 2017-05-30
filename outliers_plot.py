@@ -77,6 +77,11 @@ def create_whisker_plot13(data):
     data['green_zone_km'].plot(kind='box', subplots=True, layout=(2, 14), sharex=False, sharey=False)
     plt.show()
 
+def create_whisker_plot14(data):
+    print(data['hospital_beds_raion'].size)
+    data['hospital_beds_raion'].plot(kind='box', subplots=True, layout=(2, 14), sharex=False, sharey=False)
+    plt.show()
+
 
 
 if __name__ == '__main__':
@@ -94,4 +99,5 @@ if __name__ == '__main__':
     #create_whisker_plot10(data)
     #create_whisker_plot11(data)
     #create_whisker_plot12(data)
-    create_whisker_plot13(data)
+    # create_whisker_plot13(data)
+    create_whisker_plot14(data)

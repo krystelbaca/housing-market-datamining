@@ -1,31 +1,13 @@
-from sklearn.decomposition import PCA
-from sklearn.ensemble import ExtraTreesClassifier
-from sklearn.feature_selection import SelectFromModel
-from sklearn.feature_selection import RFE
-from sklearn.linear_model import LogisticRegression
-from sklearn.feature_selection import SelectKBest
-from sklearn.feature_selection import chi2
+
 from sklearn import preprocessing
-from sklearn import datasets
-from sklearn.model_selection import train_test_split
-from sklearn import datasets
-from sklearn import metrics
-from sklearn import tree
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-from pandas.tools.plotting import scatter_matrix
-from sklearn.model_selection import train_test_split
-from sklearn.tree import DecisionTreeRegressor
-from sklearn import metrics
-from sklearn.decomposition import PCA
 from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.ensemble import ExtraTreesRegressor
 from sklearn.feature_selection import SelectFromModel
-from sklearn.feature_selection import RFE
-from sklearn.linear_model import LogisticRegression
-from sklearn.feature_selection import SelectKBest
-from sklearn.feature_selection import chi2
+
+
 
 import logging
 
@@ -62,22 +44,6 @@ def replace_missing_values_with_mode(data, features):
     data[columns] = data[columns].fillna(mode.iloc[0])
     return data
 
-def convert_data_to_numeric(data):
-    numpy_data = data.values
-
-    for i in range(len(numpy_data[0])):
-        temp = numpy_data[:, i]
-        print(numpy_data[:, i])
-        dict = np.unique(numpy_data[:, i])
-        print("---------------------------------------------")
-        print(i)
-        print(dict)
-        print("---------------------------------------------")
-        if type(dict[0]) == str:
-            for j in range(len(dict)):
-                temp[np.where(numpy_data[:, i] == dict[j])] = j
-            numpy_data[:, i] = temp
-    return numpy_data
 
 #LIMPIEZA DE OUTLIERS
 
@@ -86,6 +52,27 @@ def remove_outliers(data, feature, outlier_value):
     data.drop(outliers, inplace=True)
     return data
 
+def nominal_to_numeric(train_df):
+   for f in train_df.columns:
+       if train_df[f].dtype=='object':
+           lbl = preprocessing.LabelEncoder()
+           lbl.fit(list(train_df[f].values.astype('str')))
+           train_df[f] = lbl.transform(list(train_df[f].values.astype('str')))
+
+def convert_data_to_numeric(data):
+        numpy_data = data.values
+
+        for i in range(len(numpy_data[0])):
+            temp = numpy_data[:, i]
+            dict = pd.unique(numpy_data[:, i])
+            # print(dict)
+            for j in range(len(dict)):
+                # print(numpy.where(numpy_data[:,i] == dict[j]))
+                temp[np.where(numpy_data[:, i] == dict[j])] = j
+
+            numpy_data[:, i] = temp
+
+        return numpy_data
 
 #APLICANDO NORMALIZACION
 
@@ -109,7 +96,6 @@ def min_max_scaler(data):
 
     # Data normalization
     min_max_scaler = preprocessing.MinMaxScaler()
-
     min_max_scaler.fit(features)
 
     # Model information:
@@ -126,7 +112,6 @@ def min_max_scaler(data):
     new_data = np.append(new_feature_vector, target.reshape(target.shape[0], -1), axis=1)
     print('\nNew array\n')
     print(new_data)
-
     return new_data
 
 
@@ -178,10 +163,10 @@ if __name__ == '__main__':
     #PRIMERA ITERACION
     replace_missing_values_with_constant(data['build_year'], "-1")
     replace_missing_values_with_mode(data, ['life_sq', 'floor', 'max_floor', 'kitch_sq', 'state', 'num_room', 'material', 'railroad_station_walk_km', 'metro_min_walk',
-                                            'hospital_beds_raion', 'metro_km_walk'])
-    # replace_mv_with_constant(data, -1)
-
-    # convert_data_to_numeric(data)
+                                             'hospital_beds_raion', 'metro_km_walk'])
+    # # replace_mv_with_constant(data, -1)
+    nominal_to_numeric(data)
+    convert_data_to_numeric(data)
 
     #SEGUNDA ITERACION
     # remove_outliers(data, 'full_sq', 5000)
@@ -195,6 +180,7 @@ if __name__ == '__main__':
     # remove_outliers(data, 'school_km', 40)
     # remove_outliers(data, 'mosque_km', 40)
     # min_max_scaler(data)
-    # attribute_subset_selection_with_trees(data, "Regression")
+
+    attribute_subset_selection_with_trees(data, "Regression")
 
     print(data)
