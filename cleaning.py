@@ -176,7 +176,7 @@ if __name__ == '__main__':
 
 
     #PRIMERA ITERACION
-    # replace_missing_values_with_constant(data['build_year'], "-1")
+    replace_missing_values_with_constant(data['build_year'], "-1")
     replace_missing_values_with_mode(data, ['life_sq', 'floor', 'max_floor', 'kitch_sq', 'state', 'num_room', 'material', 'railroad_station_walk_km', 'metro_min_walk',
                                             'hospital_beds_raion', 'metro_km_walk'])
     # replace_mv_with_constant(data, -1)
