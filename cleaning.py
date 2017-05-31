@@ -1,4 +1,6 @@
+import output as output
 from sklearn import preprocessing
+from sklearn.decomposition import PCA
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
@@ -12,6 +14,9 @@ logger = logging.getLogger(__name__)
 def open_file(fileName):
     data = pd.read_csv(fileName)
     return data
+
+def write_file(data, file_name):
+    new_data = pd.DataFrame(data=data).to_csv(file_name)
 
 def show_data_info(data):
     print("Number of instance: " + str(data.shape[0]))
@@ -155,6 +160,48 @@ def attribute_subset_selection_with_trees(data, type):
     logger.debug('New feature vector: %s', new_feature_vector[:10])
     return new_feature_vector
 
+#PCA
+def principal_components_analysis(data, n_components):
+    # import data
+    num_features = len(data.columns) - 1
+
+    features = data.ix[:, 0:num_features]
+    target = data.ix[:, num_features]
+
+    # First 10 rows
+    print('Training Data:\n\n' + str(features[:10]))
+    print('\n')
+    print('Targets:\n\n' + str(target[:10]))
+    # Model declaration
+    if n_components < 1:
+        pca = PCA(n_components = n_components, svd_solver = 'full')
+    else:
+        pca = PCA(n_components = n_components)
+
+    # Model training
+    pca.fit(features)
+
+    # Model transformation
+    new_feature_vector = pca.transform(features)
+
+    # Model information:
+    print('\nModel information:\n')
+    print('Number of components elected: ' + str(pca.n_components))
+    print('New feature dimension: ' + str(pca.n_components_))
+    print('Variance sum: ' + str(sum(pca.explained_variance_ratio_)))
+    print('Variance of every feature: ' + str(pca.explained_variance_ratio_))
+
+    # First 10 rows of new feature vector
+    print('\nNew feature vector:\n')
+    print(new_feature_vector[:10])
+    print('\n\n')
+
+    new_data = np.append(new_feature_vector, target.reshape(target.shape[0], -1), axis=1)
+    print('\nNew array\n')
+    print(new_data)
+
+    return new_data
+
 
 if __name__ == '__main__':
     data = open_file("/Users/krystelbaca/Documents/Mineria_datos/proyecto-final/housing-market-datamining/test.csv")
@@ -164,12 +211,10 @@ if __name__ == '__main__':
     #PRIMERA ITERACION
     replace_missing_values_with_constant(data['build_year'], "-1")
     replace_missing_values_with_mode(data, ['life_sq', 'floor', 'max_floor', 'kitch_sq', 'state', 'num_room', 'material', 'railroad_station_walk_km', 'metro_min_walk',
-                                             'hospital_beds_raion', 'metro_km_walk'])
+                                            'hospital_beds_raion', 'metro_km_walk'])
     replace_mv_with_constant(data, -1)
     nominal_to_numeric(data)
     convert_data_to_numeric(data)
-
-    #SEGUNDA ITERACION
     # remove_outliers(data, 'full_sq', 5000)
     # remove_outliers(data, 'life_sq', 7000)
     # remove_outliers(data, 'floor', 70)
@@ -180,8 +225,32 @@ if __name__ == '__main__':
     # remove_outliers(data, 'industrial_km', 20)
     # remove_outliers(data, 'school_km', 40)
     # remove_outliers(data, 'mosque_km', 40)
-    # min_max_scaler(data)
-
     attribute_subset_selection_with_trees(data, "Regression")
+    min_max_scaler(data)
+
+    #SEGUNDA ITERACION
+    # replace_missing_values_with_constant(data['build_year'], "-1")
+    # replace_missing_values_with_mode(data,
+    #                                  ['life_sq', 'floor', 'max_floor', 'kitch_sq', 'state', 'num_room', 'material',
+    #                                   'railroad_station_walk_km', 'metro_min_walk',
+    #                                   'hospital_beds_raion', 'metro_km_walk'])
+    # replace_mv_with_constant(data, -1)
+    # nominal_to_numeric(data)
+    # convert_data_to_numeric(data)
+    #remove_outliers(data, 'full_sq', 5000)
+    #remove_outliers(data, 'life_sq', 7000)
+    #remove_outliers(data, 'floor', 70)
+    #remove_outliers(data, 'max_floor', 100)
+    #remove_outliers(data, 'kitch_sq', 1700)
+    #remove_outliers(data, 'school_km', 50)
+    #remove_outliers(data, 'life_sq', 40)
+    #remove_outliers(data, 'industrial_km', 20)
+    #remove_outliers(data, 'school_km', 40)
+    #remove_outliers(data, 'mosque_km', 40)
+    #principal_components_analysis(data, 80)
+    #min_max_scaler(data)
+
 
     print(data)
+    write_file(data, "/Users/krystelbaca/Documents/Mineria_datos/proyecto-final/housing-market-datamining/salida.csv")
+    #output.to_csv('out.csv', index=False)
