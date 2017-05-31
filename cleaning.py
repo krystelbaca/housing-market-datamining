@@ -1,4 +1,3 @@
-
 from sklearn import preprocessing
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -6,8 +5,6 @@ import numpy as np
 from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.ensemble import ExtraTreesRegressor
 from sklearn.feature_selection import SelectFromModel
-
-
 
 import logging
 
@@ -29,6 +26,8 @@ def show_data_info(data):
     numerical_info = data.iloc[:, :data.shape[1]]
     print(numerical_info.describe())
 
+#VALORES FALTANTES
+
 def replace_missing_values_with_constant(data, constant):
    data.fillna(constant, inplace=True)
    return data
@@ -43,6 +42,14 @@ def replace_missing_values_with_mode(data, features):
     mode = data[columns].mode()
     data[columns] = data[columns].fillna(mode.iloc[0])
     return data
+
+def replace_missing_values_general(data, features):
+    features = data[features]
+    columns = features.columns
+    mode = data[columns].mode()
+    data[columns] = data[columns].fillna(mode.iloc[0])
+    return data
+
 
 
 #LIMPIEZA DE OUTLIERS
@@ -86,8 +93,8 @@ def min_max_scaler(data):
     features = data[list(range(1, num_features))]
     target = data[[num_features]]"""
 
-    features = data[:,0:-1]
-    target = data[:,-1]
+    features = data.iloc[:, 0:-1]
+    target = data.iloc[:, -1]
 
     # First 10 rows
     print('Training Data:\n\n' + str(features[:10]))
@@ -156,7 +163,7 @@ def attribute_subset_selection_with_trees(data, type):
 
 
 if __name__ == '__main__':
-    data = open_file("/Users/krystelbaca/Documents/Mineria_datos/proyecto-final/housing-market-datamining/testTrain4.csv")
+    data = open_file("/Users/krystelbaca/Documents/Mineria_datos/proyecto-final/housing-market-datamining/test.csv")
     #show_data_info(data)
 
 
@@ -164,7 +171,7 @@ if __name__ == '__main__':
     replace_missing_values_with_constant(data['build_year'], "-1")
     replace_missing_values_with_mode(data, ['life_sq', 'floor', 'max_floor', 'kitch_sq', 'state', 'num_room', 'material', 'railroad_station_walk_km', 'metro_min_walk',
                                              'hospital_beds_raion', 'metro_km_walk'])
-    # # replace_mv_with_constant(data, -1)
+    replace_mv_with_constant(data, -1)
     nominal_to_numeric(data)
     convert_data_to_numeric(data)
 
