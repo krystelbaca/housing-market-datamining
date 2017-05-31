@@ -32,18 +32,12 @@ def replace_missing_values_with_constant(data, constant):
    data.fillna(constant, inplace=True)
    return data
 
+'''Funcion que quita todos los NaN de todo el DataSet'''
 def replace_mv_with_constant(data, constant):
    data.fillna(constant, inplace=True)
    return data
 
 def replace_missing_values_with_mode(data, features):
-    features = data[features]
-    columns = features.columns
-    mode = data[columns].mode()
-    data[columns] = data[columns].fillna(mode.iloc[0])
-    return data
-
-def replace_missing_values_general(data, features):
     features = data[features]
     columns = features.columns
     mode = data[columns].mode()
